@@ -1,136 +1,100 @@
-// DADOS FICTÍCIOS PADRONIZADOS - 8º ANO
+// Dados das Disciplinas com as notas informadas
 const dadosDisciplinas = [
-  { disciplina: "Língua Portuguesa", tri1: 82, tri2: "7,8", tri3: 85, faltas: [2, 1, 1] },
-  { disciplina: "Matemática", tri1: 52, tri2: "5,8", tri3: null, faltas: [3, 2, 1] },
-  { disciplina: "Ciências", tri1: "8,1", tri2: 76, tri3: 8.0, faltas: [1, 2, 0] },
-  { disciplina: "História", tri1: 7.0, tri2: 84, tri3: null, faltas: [1, 1, 1] },
-  { disciplina: "Geografia", tri1: 68, tri2: 7.3, tri3: "7,9", faltas: [0, 1, 1] },
-  { disciplina: "Língua Inglesa", tri1: 86, tri2: "8,1", tri3: 8.7, faltas: [1, 0, 0] },
-  { disciplina: "Arte", tri1: 9.0, tri2: 92, tri3: null, faltas: [1, 1, 0] },
-  { disciplina: "Educação Física", tri1: 95, tri2: 9.0, tri3: "9,4", faltas: [0, 1, 0] },
-  { disciplina: "Educação Digital", tri1: 88, tri2: 9.1, tri3: 93, faltas: [1, 0, 1] },
-  { disciplina: "Educação Financeira", tri1: 74, tri2: "7,8", tri3: null, faltas: [1, 1, 1] },
-  { disciplina: "Estudo Orientado", tri1: 8.0, tri2: 83, tri3: "8,5", faltas: [0, 1, 0] },
-  { disciplina: "Redação e Leitura", tri1: 62, tri2: "6,8", tri3: null, faltas: [2, 1, 1] },
-  { disciplina: "Pensamento Lógico", tri1: 48, tri2: 5.6, tri3: "6,0", faltas: [2, 2, 1] },
-  { disciplina: "Literatura Arte e Movimento", tri1: "7,7", tri2: 80, tri3: null, faltas: [1, 0, 1] },
-  { disciplina: "Práticas Experimentais", tri1: 58, tri2: "6,2", tri3: 6.4, faltas: [1, 1, 1] }
+  { disciplina: "Língua Portuguesa", tri1: "9,4", tri2: "8,9", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Matemática", tri1: "6,0", tri2: "7,5", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Ciências", tri1: "6,0", tri2: "8,6", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "História", tri1: "9,7", tri2: "9,5", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Geografia", tri1: "8,0", tri2: "7,5", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Língua Inglesa", tri1: "9,1", tri2: "9,8", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Arte", tri1: "9,7", tri2: "10,0", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Educação Física", tri1: "10,0", tri2: "8,5", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Educação Digital", tri1: "9,2", tri2: "10,0", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Educação Financeira", tri1: "10,0", tri2: "10,0", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Estudo Orientado", tri1: "7,3", tri2: "9,1", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Redação e Leitura", tri1: "8,2", tri2: "8,6", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Pensamento Lógico", tri1: "10,0", tri2: "9,7", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Literatura Arte e Movimento", tri1: "7,3", tri2: "7,5", tri3: null, faltas: [0, 0, 0] },
+  { disciplina: "Práticas Experimentais", tri1: "7,2", tri2: "8,8", tri3: null, faltas: [0, 0, 0] }
 ];
 
-// NOTA: A frequência abaixo de 92% é APENAS FICTÍCIA/DEMONSTRATIVA para esta etapa.
-// Ela não é calculada a partir das faltas e será tratada de outra forma no futuro.
-
-// Função para normalizar qualquer formato de nota para a escala de 0 a 10
+// Função para normalizar e converter as notas para número
 function normalizarNota(valor) {
-  if (valor === null || valor === undefined || valor === "") {
-    return null; // Nota ainda não lançada
+  if (valor === null || valor === undefined || valor === "") return null;
+  if (typeof valor === "number") {
+    return valor > 10 ? valor / 10 : valor;
   }
-
-  // Converte texto com vírgula para ponto (ex: "7,8" vira "7.8")
-  if (typeof valor === "string") {
-    valor = valor.replace(",", ".");
-  }
-
-  let num = Number(valor);
-
-  // Se não for um número válido, descarta
-  if (isNaN(num)) {
-    return null;
-  }
-
-  // Regra: valores entre 0 e 10 continuam iguais
-  if (num >= 0 && num <= 10) {
-    return num;
-  }
-
-  // Regra: valores maiores que 10 e até 100 devem ser divididos por 10 (ex: 82 vira 8.2)
-  if (num > 10 && num <= 100) {
-    return num / 10;
-  }
-
-  // Valores fora dessas regras são inválidos
-  return null;
+  let texto = String(valor).replace(",", ".").trim();
+  let num = parseFloat(texto);
+  if (isNaN(num)) return null;
+  return num > 10 ? num / 10 : num;
 }
 
-// Função para formatar a exibição da nota na tabela
-function formatarNotaExibicao(nota) {
-  if (nota === null) {
-    return "—";
-  }
-  return nota.toFixed(1).replace(".", ",");
+// Função para formatar a exibição no HTML (ex: 8.5 vira "8,5" e null vira "—")
+function formatarExibicao(valor) {
+  let num = normalizarNota(valor);
+  return num !== null ? num.toFixed(1).replace(".", ",") : "—";
 }
 
-// Função principal que processa os dados e constrói o boletim
-function construirBoletim() {
-  const corpoTabela = document.getElementById("corpo-tabela");
-  corpoTabela.innerHTML = ""; // Limpa a tabela antes de preencher
+// Função para renderizar a tabela e os cards de resumo
+function renderizarBoletim() {
+  const tbody = document.getElementById("corpo-tabela");
+  if (!tbody) return;
+  tbody.innerHTML = "";
 
-  let somaMediasValidas = 0;
-  let qtdDisciplinasComMedia = 0;
+  let somaMedias = 0;
+  let disciplinasComMedia = 0;
   let totalFaltasGeral = 0;
-  let qtdBomDesempenho = 0;
-  let qtdAtencao = 0;
+  let aprovadas = 0;
+  let atencao = 0;
 
-  // Passa por cada disciplina da lista
   dadosDisciplinas.forEach(item => {
-    // Normaliza as notas dos 3 trimestres
     const n1 = normalizarNota(item.tri1);
     const n2 = normalizarNota(item.tri2);
     const n3 = normalizarNota(item.tri3);
 
-    // Soma as faltas dos trimestres
-    const totalFaltasDisciplina = item.faltas.reduce((acc, curr) => acc + curr, 0);
-    totalFaltasGeral += totalFaltasDisciplina;
-
-    // Calcula a média ignorando notas ausentes (null)
     const notasValidas = [n1, n2, n3].filter(n => n !== null);
     let media = null;
-    let situacaoTexto = "Nota ainda não disponível";
-    let classeStatus = "status-indisponivel";
-
     if (notasValidas.length > 0) {
-      const soma = notasValidas.reduce((acc, curr) => acc + curr, 0);
-      media = soma / notasValidas.length;
-
-      somaMediasValidas += media;
-      qtdDisciplinasComMedia++;
+      media = notasValidas.reduce((a, b) => a + b, 0) / notasValidas.length;
+      somaMedias += media;
+      disciplinasComMedia++;
 
       if (media >= 6.0) {
-        situacaoTexto = "Bom desempenho";
-        classeStatus = "status-bom";
-        qtdBomDesempenho++;
+        aprovadas++;
       } else {
-        situacaoTexto = "Atenção";
-        classeStatus = "status-atencao";
-        qtdAtencao++;
+        atencao++;
       }
     }
 
-    // Cria a linha HTML da tabela
+    const totalFaltas = item.faltas.reduce((a, b) => a + b, 0);
+    totalFaltasGeral += totalFaltas;
+
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td><strong>${item.disciplina}</strong></td>
-      <td>${formatarNotaExibicao(n1)}</td>
-      <td>${formatarNotaExibicao(n2)}</td>
-      <td>${formatarNotaExibicao(n3)}</td>
+      <td>${item.disciplina}</td>
+      <td>${formatarExibicao(item.tri1)}</td>
+      <td>${formatarExibicao(item.tri2)}</td>
+      <td>${formatarExibicao(item.tri3)}</td>
       <td><strong>${media !== null ? media.toFixed(1).replace(".", ",") : "—"}</strong></td>
-      <td>${totalFaltasDisciplina}</td>
-      <td class="${classeStatus}">${situacaoTexto}</td>
+      <td>${totalFaltas}</td>
     `;
-
-    corpoTabela.appendChild(tr);
+    tbody.appendChild(tr);
   });
 
-  // Atualiza os Cards de Resumo no topo
-  const mediaGeralCalculada = qtdDisciplinasComMedia > 0 
-    ? (somaMediasValidas / qtdDisciplinasComMedia).toFixed(1).replace(".", ",") 
-    : "—";
+  // Atualiza os cards superiores
+  const mediaGeralEl = document.getElementById("media-geral");
+  const aprovadasEl = document.getElementById("disciplinas-aprovadas");
+  const atencaoEl = document.getElementById("disciplinas-atencao");
+  const faltasEl = document.getElementById("total-faltas");
 
-  document.getElementById("media-geral").innerText = mediaGeralCalculada;
-  document.getElementById("total-faltas").innerText = totalFaltasGeral;
-  document.getElementById("qtd-bom-desempenho").innerText = qtdBomDesempenho;
-  document.getElementById("qtd-atencao").innerText = qtdAtencao;
+  if (mediaGeralEl) {
+    let mediaGeral = disciplinasComMedia > 0 ? (somaMedias / disciplinasComMedia).toFixed(1).replace(".", ",") : "—";
+    mediaGeralEl.innerText = mediaGeral;
+  }
+  if (aprovadasEl) aprovadasEl.innerText = aprovadas;
+  if (atencaoEl) atencaoEl.innerText = atencao;
+  if (faltasEl) faltasEl.innerText = totalFaltasGeral;
 }
 
-// Executa a função assim que a página carrega
-construirBoletim();
+// Executa ao carregar a página
+document.addEventListener("DOMContentLoaded", renderizarBoletim);
