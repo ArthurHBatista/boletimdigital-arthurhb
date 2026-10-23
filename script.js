@@ -121,12 +121,12 @@ async function fazerLogin() {
 
     const resultado = await resposta.json();
 
-    // PIN mantido somente em memória
+    // PIN mantido somente em memória durante a sessão
     pinSessao = pinDigitado;
     campoPin.value = "";
 
-    // DADOS DA API > DADOS LOCAIS
-    if (resultado.dados && Array.isArray(resultado.dados.disciplinas) && resultado.dados.disciplinas.length > 0) {
+    // Se existirem dados na API (DADOS DA API > DADOS LOCAIS)
+    if (resultado && resultado.dados && Array.isArray(resultado.dados.disciplinas) && resultado.dados.disciplinas.length > 0) {
       dadosDisciplinas = resultado.dados.disciplinas;
     }
 
