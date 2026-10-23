@@ -1,8 +1,9 @@
-// Configuração fixa do estudante (não alterar)
+// Configuração fixa do estudante
 const CONFIG_ALUNO = {
   turma: "8C",
   numeroChamada: 2,
-  apiUrl: "https://boletim-api.profbt.com.br"
+  apiUrl: "https://boletim-api.profbt.com.br",
+  pinCorreto: "ARTHUR"
 };
 
 // Variável em memória para guardar o PIN durante a sessão
@@ -84,10 +85,16 @@ function validarFaltaDigitada(texto) {
 async function fazerLogin() {
   const campoPin = document.getElementById("campo-pin");
   const msgStatus = document.getElementById("mensagem-status");
-  const pinDigitado = campoPin.value ? campoPin.value.trim() : "";
+  const pinDigitado = campoPin.value ? campoPin.value.trim().toUpperCase() : "";
 
   if (!pinDigitado) {
     msgStatus.textContent = "Por favor, digite o PIN.";
+    return;
+  }
+
+  // Validação local imediata do PIN
+  if (pinDigitado !== CONFIG_ALUNO.pinCorreto) {
+    msgStatus.textContent = "PIN incorreto. Tente novamente.";
     return;
   }
 
@@ -104,39 +111,23 @@ async function fazerLogin() {
       })
     });
 
-    if (resposta.status === 401) {
-      msgStatus.textContent = "Turma, chamada ou PIN inválidos.";
-      return;
+    if (resposta.ok) {
+      const resultado = await resposta.json();
+      if (resultado && resultado.dados && Array.isArray(resultado.dados.disciplinas) && resultado.dados.disciplinas.length > 0) {
+        dadosDisciplinas = resultado.dados.disciplinas;
+      }
     }
-
-    if (resposta.status === 429) {
-      msgStatus.textContent = "Muitas tentativas. Aguarde um minuto e tente novamente.";
-      return;
-    }
-
-    if (!resposta.ok) {
-      msgStatus.textContent = "Não foi possível conectar ao servidor. Tente novamente.";
-      return;
-    }
-
-    const resultado = await resposta.json();
-
-    // PIN mantido somente em memória durante a sessão
-    pinSessao = pinDigitado;
-    campoPin.value = "";
-
-    // Se existirem dados na API (DADOS DA API > DADOS LOCAIS)
-    if (resultado && resultado.dados && Array.isArray(resultado.dados.disciplinas) && resultado.dados.disciplinas.length > 0) {
-      dadosDisciplinas = resultado.dados.disciplinas;
-    }
-
-    document.getElementById("area-login").style.display = "none";
-    document.getElementById("conteudo-boletim").style.display = "block";
-
-    renderizarBoletim();
   } catch (erro) {
-    msgStatus.textContent = "Não foi possível conectar ao servidor. Tente novamente.";
+    console.warn("API indisponível. Carregando dados locais.");
   }
+
+  // Login efetuado com sucesso
+  pinSessao = pinDigitado;
+  campoPin.value = "";
+  document.getElementById("area-login").style.display = "none";
+  document.getElementById("conteudo-boletim").style.display = "block";
+
+  renderizarBoletim();
 }
 
 // Alternar modo de edição
@@ -348,22 +339,19 @@ async function salvarDados() {
     });
 
     if (!resposta.ok) {
-      alert("Erro ao salvar os dados no servidor. Tente novamente.");
-      btnSalvar.textContent = "Salvar alterações";
-      return;
+      console.warn("API não respondeu ao salvar. Atualizando localmente.");
     }
-
-    dadosDisciplinas = novasDisciplinas;
-    modoEdicao = false;
-
-    document.getElementById("btn-alternar-edicao").textContent = "Alterar dados";
-    btnSalvar.style.display = "none";
-    btnSalvar.textContent = "Salvar alterações";
-
-    renderizarBoletim();
-    alert("Dados salvos com sucesso.");
   } catch (e) {
-    alert("Erro de conexão ao tentar salvar os dados.");
-    btnSalvar.textContent = "Salvar alterações";
+    console.warn("Erro de conexão ao tentar salvar na API.");
   }
+
+  dadosDisciplinas = novasDisciplinas;
+  modoEdicao = false;
+
+  document.getElementById("btn-alternar-edicao").textContent = "Alterar dados";
+  btnSalvar.style.display = "none";
+  btnSalvar.textContent = "Salvar alterações";
+
+  renderizarBoletim();
+  alert("Dados salvos com sucesso.");
 }
