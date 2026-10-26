@@ -1,4 +1,3 @@
-// Configuração fixa do estudante
 const CONFIG_ALUNO = {
   turma: "8C",
   numeroChamada: 2,
@@ -6,18 +5,13 @@ const CONFIG_ALUNO = {
   pinCorreto: "ARTHUR"
 };
 
-// Variável em memória para guardar o PIN durante a sessão
 let pinSessao = "";
-
-// Modo de edição
 let modoEdicao = false;
 
-// Instâncias dos Gráficos
 let graficoMedias = null;
 let graficoEvolucao = null;
 let graficoFaltas = null;
 
-// Dados das Disciplinas (dados locais / fallback)
 let dadosDisciplinas = [
   { disciplina: "Língua Portuguesa", tri1: "9,4", tri2: "8,9", tri3: null, faltas: [0, 0, 0] },
   { disciplina: "Matemática", tri1: "6,0", tri2: "7,5", tri3: null, faltas: [0, 0, 0] },
@@ -36,7 +30,6 @@ let dadosDisciplinas = [
   { disciplina: "Práticas Experimentais", tri1: "7,2", tri2: "8,8", tri3: null, faltas: [0, 0, 0] }
 ];
 
-// Normalização para dados antigos e recuperados
 function normalizarNota(valor) {
   if (valor === null || valor === undefined || valor === "") return null;
   if (typeof valor === "number") {
@@ -48,13 +41,11 @@ function normalizarNota(valor) {
   return num > 10 ? num / 10 : num;
 }
 
-// Formatação para exibição no HTML
 function formatarExibicao(valor) {
   let num = normalizarNota(valor);
   return num !== null ? num.toFixed(1).replace(".", ",") : "—";
 }
 
-// Validação estrita para edição de nota digitada pelo usuário
 function validarNotaDigitada(texto) {
   if (texto === null || texto === undefined || texto.trim() === "") {
     return { valido: true, valor: null };
@@ -70,7 +61,6 @@ function validarNotaDigitada(texto) {
   return { valido: true, valor: num };
 }
 
-// Validação estrita para edição de faltas digitadas
 function validarFaltaDigitada(texto) {
   if (texto === null || texto === undefined || texto.trim() === "") {
     return { valido: false };
@@ -86,10 +76,11 @@ function validarFaltaDigitada(texto) {
   return { valido: true, valor: num };
 }
 
-// Função para realizar o login e buscar dados na API
 async function fazerLogin() {
   const campoPin = document.getElementById("campo-pin");
   const msgStatus = document.getElementById("mensagem-status");
+  if (!campoPin || !msgStatus) return;
+
   const pinDigitado = campoPin.value ? campoPin.value.trim().toUpperCase() : "";
 
   if (!pinDigitado) {
@@ -97,7 +88,6 @@ async function fazerLogin() {
     return;
   }
 
-  // Validação local imediata do PIN
   if (pinDigitado !== CONFIG_ALUNO.pinCorreto) {
     msgStatus.textContent = "PIN incorreto. Tente novamente.";
     return;
@@ -126,7 +116,6 @@ async function fazerLogin() {
     console.warn("API indisponível. Carregando dados locais.");
   }
 
-  // Login efetuado com sucesso
   pinSessao = pinDigitado;
   campoPin.value = "";
   document.getElementById("area-login").style.display = "none";
@@ -136,7 +125,6 @@ async function fazerLogin() {
   atualizarGraficos();
 }
 
-// Alternar modo de edição
 function alternarEdicao() {
   modoEdicao = !modoEdicao;
   const btnAlternar = document.getElementById("btn-alternar-edicao");
@@ -153,7 +141,6 @@ function alternarEdicao() {
   renderizarBoletim();
 }
 
-// Renderiza a tabela e atualiza os cards
 function renderizarBoletim() {
   const tbody = document.getElementById("corpo-tabela");
   if (!tbody) return;
@@ -192,7 +179,6 @@ function renderizarBoletim() {
     const tr = document.createElement("tr");
 
     if (!modoEdicao) {
-      // Exibição normal
       const tdDisc = document.createElement("td");
       tdDisc.textContent = item.disciplina;
 
@@ -233,7 +219,6 @@ function renderizarBoletim() {
       tr.appendChild(tdFaltas);
       tr.appendChild(tdSit);
     } else {
-      // Modo de edição
       const tdDisc = document.createElement("td");
       tdDisc.textContent = item.disciplina;
 
@@ -263,7 +248,6 @@ function renderizarBoletim() {
     tbody.appendChild(tr);
   });
 
-  // Atualiza cards
   const mediaGeralEl = document.getElementById("media-geral");
   const aprovadasEl = document.getElementById("qtd-bom-desempenho");
   const atencaoEl = document.getElementById("qtd-atencao");
@@ -278,12 +262,10 @@ function renderizarBoletim() {
   if (faltasEl) faltasEl.textContent = String(totalFaltasGeral);
 }
 
-// Salvar alterações na API
 async function salvarDados() {
   let erros = 0;
   const novasDisciplinas = [];
 
-  // Remove marcações de erro anteriores
   document.querySelectorAll(".input-invalido").forEach(el => el.classList.remove("input-invalido"));
 
   dadosDisciplinas.forEach((item, index) => {
@@ -362,8 +344,6 @@ async function salvarDados() {
   atualizarGraficos();
   alert("Dados salvos com sucesso.");
 }
-
-// --- FUNÇÕES EXCLUSIVAS DOS GRÁFICOS ---
 
 function atualizarGraficoMedias() {
   const ctx = document.getElementById("graficoMediasDisciplinas");
@@ -550,3 +530,30 @@ function atualizarGraficoFaltas() {
       scales: {
         y: {
           beginAtZero: true,
+          ticks: { color: "#cccccc", precision: 0 },
+          grid: { color: "#1a1a2e" }
+        },
+        x: {
+          ticks: { color: "#cccccc" },
+          grid: { color: "#1a1a2e" }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `Faltas: ${context.raw}`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function atualizarGraficos() {
+  atualizarGraficoMedias();
+  atualizarGraficoEvolucao();
+  atualizarGraficoFaltas();
+}

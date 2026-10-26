@@ -2,22 +2,18 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <!-- Garante que o site fique responsivo no celular -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Boletim Digital - 8º Ano</title>
-  <!-- Link para o arquivo de estilos -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="container">
-    <!-- Cabeçalho do Boletim -->
     <header class="header">
       <h1>Boletim Digital</h1>
       <p class="subtitle">8º Ano — Turma 8C — Chamada #2</p>
     </header>
 
-    <!-- Área de Login por PIN -->
     <section id="area-login" class="login-container">
       <div class="login-box">
         <h2>Acesso ao Boletim</h2>
@@ -31,14 +27,12 @@
       </div>
     </section>
 
-    <!-- Conteúdo do Boletim (inicialmente oculto) -->
     <div id="conteudo-boletim" style="display: none;">
       <div class="acoes-boletim">
         <button id="btn-alternar-edicao" onclick="alternarEdicao()">Alterar dados</button>
         <button id="btn-salvar" onclick="salvarDados()" style="display: none;">Salvar alterações</button>
       </div>
 
-      <!-- Cards de Resumo no topo -->
       <section class="cards-grid">
         <div class="card">
           <h3>Média Geral</h3>
@@ -67,7 +61,6 @@
         </div>
       </section>
 
-      <!-- Área dos Gráficos -->
       <section class="area-graficos">
         <article class="grafico-card">
           <h2>Média por disciplina</h2>
@@ -92,7 +85,6 @@
         </article>
       </section>
 
-      <!-- Tabela de Notas e Faltas -->
       <section class="tabela-container">
         <table>
           <thead>
@@ -106,7 +98,6 @@
               <th>Situação</th>
             </tr>
           </thead>
-          <!-- O corpo da tabela será preenchido automaticamente pelo JavaScript -->
           <tbody id="corpo-tabela">
           </tbody>
         </table>
@@ -114,9 +105,7 @@
     </div>
   </div>
 
-  <!-- Biblioteca Chart.js para visualização de gráficos -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Link para o arquivo de script JavaScript -->
   <script src="script.js"></script>
 </body>
 </html>
